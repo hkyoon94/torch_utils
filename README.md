@@ -16,4 +16,37 @@
 
 7. pipeline.py contains pipeline classes that unify the preprocessing, monitoring routines in this package.
 
-7. task.py contains computing sub-routines for the monitoring and pipeline modules.
+8. task.py contains computing sub-routines for the monitoring and pipeline modules.
+
+
+*** pipeline usage example ***
+
+'''
+data = datatool.DataStruct(X,Y)
+
+model = nnframe.FFNN(layers = 2*[t.nn.Linear],
+                     args = [{'in_features':data.num_features, 'out_features':16},
+                            {'in_features':16, 'out_features':data.num_targets}],
+                     activations = 2*[t.sigmoid],
+                     dropouts = 2*[0.5])
+
+work = pipeline.Builder(data,model)
+work.learn( criterion = t.nn.CrossEntropyLoss(),
+            optimizer = t.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5),
+            tasklist = [(work.loss,5),
+                        (work.acc_maskwise,5),
+                        #(work.P_max_mean,100),
+                        (work.loss_log,20),
+                        (work.acc_log,100),
+                        (work.LA_plot,100),
+                        #(work.P_show,nan),
+                        #(work.P_max_mean_log,100),
+                        #(work.P_max_mean_window,100),
+                        #(work.out_2d,nan),
+                        ],
+            total_epoch=1000, batch_size=500, 
+            forward_val=False, forward_test=False, streaming=True, gpu=True,)
+
+work.infer(data.x_test,data.y_test)
+work.infer(data.x_val,data.y_val)
+'''
