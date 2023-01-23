@@ -19,21 +19,21 @@
 8. task.py contains computing sub-routines for the monitoring and pipeline modules.
 
 
-*** pipeline usage example ***
+*** pipeline usage simple example ***
 
-'''
-data = datatool.DataStruct(X,Y)
+```
+data = datatool.DataStruct(X,Y)                                                       # data construction
 
 model = nnframe.FFNN(layers = 2*[t.nn.Linear],
-                     args = [{'in_features':data.num_features, 'out_features':16},
+                     args = [{'in_features':data.num_features, 'out_features':16},    # layer construction
                             {'in_features':16, 'out_features':data.num_targets}],
                      activations = 2*[t.sigmoid],
                      dropouts = 2*[0.5])
 
-work = pipeline.Builder(data,model)
-work.learn( criterion = t.nn.CrossEntropyLoss(),
+work = pipeline.Builder(data,model)                                                   # learning pipeline construction
+work.learn( criterion = t.nn.CrossEntropyLoss(),                                      # learning pipeline usage
             optimizer = t.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5),
-            tasklist = [(work.loss,5),
+            tasklist = [(work.loss,5),                                                # do work.<task> in every N-epoch
                         (work.acc_maskwise,5),
                         #(work.P_max_mean,100),
                         (work.loss_log,20),
@@ -44,9 +44,9 @@ work.learn( criterion = t.nn.CrossEntropyLoss(),
                         #(work.P_max_mean_window,100),
                         #(work.out_2d,nan),
                         ],
-            total_epoch=1000, batch_size=500, 
+            total_epoch=1000, batch_size=500,                                         # assining learning arguments
             forward_val=False, forward_test=False, streaming=True, gpu=True,)
 
-work.infer(data.x_test,data.y_test)
+work.infer(data.x_test,data.y_test)                                                   # inference pipeline usage
 work.infer(data.x_val,data.y_val)
-'''
+```
