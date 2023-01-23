@@ -1,6 +1,6 @@
 # torch_utils
 
-### Customized PyTorch utility package of my own, written for convenient training and testing of various data.
+### My own customized PyTorch utility package written for the use of convenient training and testing of various data.
 
 1. __init__.py contains high-API wrapped routines.
 
